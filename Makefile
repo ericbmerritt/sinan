@@ -15,7 +15,7 @@ PYPATH=$(PYTHONPATH):$(SMOKETEST_DIR)
 BEHAVIOURS= src/sin_task.erl src/sin_dep_resolver.erl
 
 .PHONY=all setup build escript cucumber proper eunit dialyzer \
-	run debug smoketests testall gh-pages clean install-deb \
+	run debug smoketests test gh-pages clean install-deb \
 	build-deb publish-ppa update-version
 
 SINFLAGS=-s $(CURDIR) -p sinan -n $(VSN)
@@ -81,7 +81,7 @@ smoketests: main
 		PYTHONPATH=$(PYPATH) python $$f ; \
 	done
 
-testall : cucumber proper eunit smoketests
+test : cucumber proper eunit smoketests
 
 gh-pages:
 	./do-gh-pages
