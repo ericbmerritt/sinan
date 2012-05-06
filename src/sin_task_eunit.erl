@@ -80,16 +80,22 @@ run_module_tests(Config, State0, AllModules) ->
                          Name0 ->
                              Name0
                      end,
-              case lists:member({test, 0}, Name:module_info(exports)) of
-                  true ->
-                      sin_log:normal(Config, "testing ~p", [Name]),
-                      case eunit:test(Name, [{verbose, Config:match(verbose, false)}]) of
-                          error ->
-                              sin_state:add_run_error(Name, eunit_failure, State1);
-                          _ ->
-                              State1
-                      end;
-                  _ ->
+              try
+                  case lists:member({test, 0}, Name:module_info(exports)) of
+                      true ->
+                          sin_log:normal(Config, "testing ~p", [Name]),
+                          case eunit:test(Name, [{verbose, Config:match(verbose, false)}]) of
+                              error ->
+                                  sin_state:add_run_error(Name, eunit_failure, State1);
+                              _ ->
+                                  State1
+                          end;
+                      _ ->
+                          State1
+                  end
+              catch
+                  error:undef ->
+                      %% This happens where there is no module_info defined
                       State1
               end
       end, State0, AllModules).
